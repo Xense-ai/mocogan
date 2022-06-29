@@ -18,7 +18,7 @@ Options:
     --ffmpeg=<str>                          ffmpeg executable (on windows should be ffmpeg.exe). Make sure
                                             the executable is in your PATH [default: ffmpeg]
 """
-
+import cv2
 import os
 import docopt
 import torch
@@ -27,29 +27,45 @@ from trainers import videos_to_numpy
 
 import subprocess as sp
 
+def recursion_change_bn(module):
+    if isinstance(module, torch.nn.BatchNorm2d):
+        module.track_running_stats = 1
+    else:
+        for i, (name, module1) in enumerate(module._modules.items()):
+            module1 = recursion_change_bn(module1)
+    return module
 
-def save_video(ffmpeg, video, filename):
-    command = [ffmpeg,
-               '-y',
-               '-f', 'rawvideo',
-               '-vcodec', 'rawvideo',
-               '-s', '64x64',
-               '-pix_fmt', 'rgb24',
-               '-r', '8',
-               '-i', '-',
-               '-c:v', 'mjpeg',
-               '-q:v', '3',
-               '-an',
-               filename]
+def save_video(video, filename):
+    cap = cv2.VideoCapture(video)
 
-    pipe = sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
-    pipe.stdin.write(video.tostring())
+    if (cap.isOpened() == False):
+        print("Unable to read camera feed")
 
+    frame_width = int(cap.get(3))
+    frame_height = int(cap.get(4))
+
+    out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+    while(True):
+
+        ret, frame = cap.read()
+  
+        if ret == True:
+            out.write(frame)
+            cv2.imshow('frame',frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        else:
+            break 
+      
 
 if __name__ == "__main__":
     args = docopt.docopt(__doc__)
 
     generator = torch.load(args["<model>"], map_location={'cuda:0': 'cpu'})
+    generator = recursion_change_bn(generator)
     generator.eval()
     num_videos = int(args['--num_videos'])
     output_folder = args['<output_folder>']
@@ -60,4 +76,27 @@ if __name__ == "__main__":
     for i in range(num_videos):
         v, _ = generator.sample_videos(1, int(args['--number_of_frames']))
         video = videos_to_numpy(v).squeeze().transpose((1, 2, 3, 0))
-        save_video(args["--ffmpeg"], video, os.path.join(output_folder, "{}.{}".format(i, args['--output_format'])))
+        #save_video(args["--ffmpeg"], video, os.path.join(output_folder, "{}.{}".format(i, args['--output_format'])))
+        cap = cv2.VideoCapture(video)
+
+        if (cap.isOpened() == False):
+            print("Unable to read camera feed")
+
+        frame_width = int(cap.get(3))
+        frame_height = int(cap.get(4))
+
+        out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
+
+        while(True):
+
+            ret, frame = cap.read()
+  
+            if ret == True:
+                out.write(frame)
+                cv2.imshow('frame',frame)
+
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+
+            else:
+                break 
