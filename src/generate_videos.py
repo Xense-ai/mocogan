@@ -18,6 +18,7 @@ Options:
     --ffmpeg=<str>                          ffmpeg executable (on windows should be ffmpeg.exe). Make sure
                                             the executable is in your PATH [default: ffmpeg]
 """
+
 import cv2
 import os
 import docopt
@@ -35,32 +36,16 @@ def recursion_change_bn(module):
             module1 = recursion_change_bn(module1)
     return module
 
-def save_video(video, filename):
-    cap = cv2.VideoCapture(video)
-
-    if (cap.isOpened() == False):
-        print("Unable to read camera feed")
-
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-
-    out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
-
-    while(True):
-
-        ret, frame = cap.read()
-  
-        if ret == True:
-            out.write(frame)
-            cv2.imshow('frame',frame)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        else:
-            break 
+def save_video(ffmpeg, video, filename):
+    
+    out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 25, (64,64))
+    
+    for i in range(video.shape[0]):
+    
+        out.write(video[i,:,:,:])
+    
+    out.release()
       
-
 if __name__ == "__main__":
     args = docopt.docopt(__doc__)
 
@@ -76,27 +61,5 @@ if __name__ == "__main__":
     for i in range(num_videos):
         v, _ = generator.sample_videos(1, int(args['--number_of_frames']))
         video = videos_to_numpy(v).squeeze().transpose((1, 2, 3, 0))
-        #save_video(args["--ffmpeg"], video, os.path.join(output_folder, "{}.{}".format(i, args['--output_format'])))
-        cap = cv2.VideoCapture(video)
-
-        if (cap.isOpened() == False):
-            print("Unable to read camera feed")
-
-        frame_width = int(cap.get(3))
-        frame_height = int(cap.get(4))
-
-        out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 10, (frame_width,frame_height))
-
-        while(True):
-
-            ret, frame = cap.read()
-  
-            if ret == True:
-                out.write(frame)
-                cv2.imshow('frame',frame)
-
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-
-            else:
-                break 
+        save_video(args["--ffmpeg"], video, os.path.join(output_folder, "{}.{}".format(i, args['--output_format'])))
+        
