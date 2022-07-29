@@ -144,6 +144,7 @@ class Trainer(object):
             self.video_enumerator = enumerate(self.video_sampler)
 
         batch_idx, batch = next(self.video_enumerator)
+   
         b = batch
         if self.use_cuda:
             for k, v in batch.iteritems():
@@ -271,10 +272,10 @@ class Trainer(object):
                                          sample_fake_image_batch, sample_fake_video_batch,
                                          opt_generator)
 
-            logs['l_gen'] += l_gen.data[0]
+            logs['l_gen'] += l_gen.data.item()
 
-            logs['l_image_dis'] += l_image_dis.data[0]
-            logs['l_video_dis'] += l_video_dis.data[0]
+            logs['l_image_dis'] += l_image_dis.data.item()
+            logs['l_video_dis'] += l_video_dis.data.item()
 
             batch_num += 1
 
@@ -286,14 +287,20 @@ class Trainer(object):
 
                 log_string += ". Took %5.2f" % (time.time() - start_time)
 
-                print log_string
+                print (log_string)
 
                 for tag, value in logs.items():
                     logger.scalar_summary(tag, value / self.log_interval, batch_num)
 
                 logs = init_logs()
                 start_time = time.time()
-
+    
+                if tostart =! 0:
+                    batch_num = tostart
+                    generator = TheModelClass(*args,**kwargs)
+                    generator.load_state_Dict(torch.load(Path))
+                    tostart = 1
+                    
                 generator.eval()
 
                 images, _ = sample_fake_image_batch(self.image_batch_size)
