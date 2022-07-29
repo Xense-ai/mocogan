@@ -107,15 +107,18 @@ if __name__ == "__main__":
 
     video_dataset = data.VideoDataset(dataset, 16, 2, video_transforms)
     video_loader = DataLoader(video_dataset, batch_size=video_batch, drop_last=True, num_workers=2, shuffle=True)
-
+    generator_number = args['generator_number']
+    
     generator = models.VideoGenerator(n_channels, dim_z_content, dim_z_category, dim_z_motion, video_length)
-
+    if generator_number > 0
+        generator = torch.load(os.path.join("/home/ubuntu/mocogan/logs/exercises"),generator_number)
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
                                               use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
     video_discriminator = build_discriminator(args['--video_discriminator'], dim_categorical=dim_z_category,
                                               n_channels=n_channels, use_noise=args['--use_noise'],
                                               noise_sigma=float(args['--noise_sigma']))
+    tostart = args['--gen']
 
     if torch.cuda.is_available():
         generator.cuda()
