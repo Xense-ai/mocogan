@@ -39,6 +39,7 @@ Options:
     --dim_z_content=<count>         dimensionality of the content input, ie hidden space [default: 50]
     --dim_z_motion=<count>          dimensionality of the motion input [default: 10]
     --dim_z_category=<count>        dimensionality of categorical input [default: 6]
+    --generator_number=<path>       specifies a path to a saved generator [default: ]
 """
 
 import os
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     video_dataset = data.VideoDataset(dataset, 16, 2, video_transforms)
     video_loader = DataLoader(video_dataset, batch_size=video_batch, drop_last=True, num_workers=2, shuffle=True)
     generator_number = args['generator_number']
-    
+    gen = 'generator 
     generator = models.VideoGenerator(n_channels, dim_z_content, dim_z_category, dim_z_motion, video_length)
     if generator_number > 0
         generator = torch.load(os.path.join("/home/ubuntu/mocogan/logs/exercises"),generator_number)
