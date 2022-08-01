@@ -113,7 +113,7 @@ if __name__ == "__main__":
     # gen = 'generator 
     generator = models.VideoGenerator(n_channels, dim_z_content, dim_z_category, dim_z_motion, video_length)
     if generator_number > 0:
-        generator = torch.load(os.path.join("/Users/josepheast/",generator_number),map_location = 'cpu')
+        generator = torch.load(os.path.join("../logs/exercises",generator_number),map_location = 'cpu')
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
                                               use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
