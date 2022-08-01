@@ -272,10 +272,10 @@ class Trainer(object):
                                          sample_fake_image_batch, sample_fake_video_batch,
                                          opt_generator)
 
-            logs['l_gen'] += l_gen.data.item()
+            logs['l_gen'] += l_gen.data[0]
 
-            logs['l_image_dis'] += l_image_dis.data.item()
-            logs['l_video_dis'] += l_video_dis.data.item()
+            logs['l_image_dis'] += l_image_dis.data[0]
+            logs['l_video_dis'] += l_video_dis.data[0]
 
             batch_num += 1
 
@@ -295,11 +295,7 @@ class Trainer(object):
                 logs = init_logs()
                 start_time = time.time()
     
-                if tostart != 0:
-                    batch_num = tostart
-                    generator = TheModelClass(*args,**kwargs)
-                    generator.load_state_Dict(torch.load(Path))
-                    tostart = 1
+
                     
                 generator.eval()
 
