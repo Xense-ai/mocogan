@@ -295,7 +295,7 @@ class Trainer(object):
                 logs = init_logs()
                 start_time = time.time()
     
-                if tostart =! 0:
+                if tostart != 0:
                     batch_num = tostart
                     generator = TheModelClass(*args,**kwargs)
                     generator.load_state_Dict(torch.load(Path))

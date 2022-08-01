@@ -259,8 +259,29 @@ class VideoGenerator(nn.Module):
     def sample_z_video(self, num_samples, video_len=None):
         z_content = self.sample_z_content(num_samples, video_len)
         z_category, z_category_labels = self.sample_z_categ(num_samples, video_len)
+       
+        
+       
         z_motion = self.sample_z_m(num_samples, video_len)
-
+        a = np.array([[1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.],
+        [1., 0., 0., 0.]],dtype = np.float32)
+        
+        #z_category = torch.from_numpy(a)
+      
         if z_category is not None:
             z = torch.cat([z_content, z_category, z_motion], dim=1)
         else:

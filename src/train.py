@@ -39,7 +39,8 @@ Options:
     --dim_z_content=<count>         dimensionality of the content input, ie hidden space [default: 50]
     --dim_z_motion=<count>          dimensionality of the motion input [default: 10]
     --dim_z_category=<count>        dimensionality of categorical input [default: 6]
-    --generator_number=<path>       specifies a path to a saved generator [default: ]
+    
+    --generator_number=<float>       specifies a path to a saved generator [default: ]
 """
 
 import os
@@ -80,7 +81,7 @@ def video_transform(video, image_transform):
 
 if __name__ == "__main__":
     args = docopt.docopt(__doc__)
-    print args
+    print (args)
 
     n_channels = int(args['--n_channels'])
 
@@ -108,18 +109,18 @@ if __name__ == "__main__":
 
     video_dataset = data.VideoDataset(dataset, 16, 2, video_transforms)
     video_loader = DataLoader(video_dataset, batch_size=video_batch, drop_last=True, num_workers=2, shuffle=True)
-    generator_number = args['generator_number']
-    gen = 'generator 
+    generator_number = args['--generator_number']
+    # gen = 'generator 
     generator = models.VideoGenerator(n_channels, dim_z_content, dim_z_category, dim_z_motion, video_length)
-    if generator_number > 0
-        generator = torch.load(os.path.join("/home/ubuntu/mocogan/logs/exercises"),generator_number)
+    if generator_number > 0:
+        generator = torch.load(os.path.join("/Users/josepheast/",generator_number),map_location = 'cpu')
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
                                               use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
     video_discriminator = build_discriminator(args['--video_discriminator'], dim_categorical=dim_z_category,
                                               n_channels=n_channels, use_noise=args['--use_noise'],
                                               noise_sigma=float(args['--noise_sigma']))
-    tostart = args['--gen']
+   
 
     if torch.cuda.is_available():
         generator.cuda()
