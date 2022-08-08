@@ -115,7 +115,7 @@ if __name__ == "__main__":
     #print(os.path.join("../logs/exercises",generator_number))
     if generator_number != "":
         # generator = torch.load(os.path.join("../logs/exercises",generator_number),map_location = 'cpu') FOR MAC
-        generator = torch.load(os.path.join("../logs/exercises",generator_number))
+        generator = torch.load(generator_number)
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
                                               use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
