@@ -117,7 +117,7 @@ if __name__ == "__main__":
         # generator = torch.load(os.path.join("../logs/exercises",generator_number),map_location = 'cpu') FOR MAC
         generator = torch.load(os.path.join("../logs/exercises",generator_number))
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
-                                         s     use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
+                                              use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
     video_discriminator = build_discriminator(args['--video_discriminator'], dim_categorical=dim_z_category,
                                               n_channels=n_channels, use_noise=args['--use_noise'],
