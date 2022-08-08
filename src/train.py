@@ -113,11 +113,11 @@ if __name__ == "__main__":
     # gen = 'generator 
     generator = models.VideoGenerator(n_channels, dim_z_content, dim_z_category, dim_z_motion, video_length)
     #print(os.path.join("../logs/exercises",generator_number))
-    if generator_number > 0:
+    if generator_number != "":
         # generator = torch.load(os.path.join("../logs/exercises",generator_number),map_location = 'cpu') FOR MAC
         generator = torch.load(os.path.join("../logs/exercises",generator_number))
     image_discriminator = build_discriminator(args['--image_discriminator'], n_channels=n_channels,
-                                              use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
+                                         s     use_noise=args['--use_noise'], noise_sigma=float(args['--noise_sigma']))
 
     video_discriminator = build_discriminator(args['--video_discriminator'], dim_categorical=dim_z_category,
                                               n_channels=n_channels, use_noise=args['--use_noise'],
