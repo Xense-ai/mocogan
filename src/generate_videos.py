@@ -19,6 +19,7 @@ Options:
                                             the executable is in your PATH [default: ffmpeg]
 """
 
+import cv2
 import os
 import docopt
 import torch
@@ -27,29 +28,29 @@ from trainers import videos_to_numpy
 
 import subprocess as sp
 
+def recursion_change_bn(module):
+    if isinstance(module, torch.nn.BatchNorm2d):
+        module.track_running_stats = 1
+    else:
+        for i, (name, module1) in enumerate(module._modules.items()):
+            module1 = recursion_change_bn(module1)
+    return module
 
 def save_video(ffmpeg, video, filename):
-    command = [ffmpeg,
-               '-y',
-               '-f', 'rawvideo',
-               '-vcodec', 'rawvideo',
-               '-s', '64x64',
-               '-pix_fmt', 'rgb24',
-               '-r', '8',
-               '-i', '-',
-               '-c:v', 'mjpeg',
-               '-q:v', '3',
-               '-an',
-               filename]
-
-    pipe = sp.Popen(command, stdin=sp.PIPE, stderr=sp.PIPE)
-    pipe.stdin.write(video.tostring())
-
-
+    
+    out = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), 25, (64,64))
+    
+    for i in range(video.shape[0]):
+    
+        out.write(video[i,:,:,:])
+    
+    out.release()
+      
 if __name__ == "__main__":
     args = docopt.docopt(__doc__)
 
     generator = torch.load(args["<model>"], map_location={'cuda:0': 'cpu'})
+    generator = recursion_change_bn(generator)
     generator.eval()
     num_videos = int(args['--num_videos'])
     output_folder = args['<output_folder>']
@@ -61,3 +62,4 @@ if __name__ == "__main__":
         v, _ = generator.sample_videos(1, int(args['--number_of_frames']))
         video = videos_to_numpy(v).squeeze().transpose((1, 2, 3, 0))
         save_video(args["--ffmpeg"], video, os.path.join(output_folder, "{}.{}".format(i, args['--output_format'])))
+        
